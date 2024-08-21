@@ -1,7 +1,8 @@
 import { AnimatedText } from '@/components/AnimatedText'
 import { SearchBar } from '@/components/SearchBar'
+import { FilterBar } from '@/components/FilterBar'
 import clsx from 'clsx'
-import React from 'react'
+import React, { useState } from 'react'
 import { SearchResult, SearchResultProps } from '../SearchResult'
 
 export type SearchProps = {
@@ -28,6 +29,8 @@ export const Search: React.FC<SearchProps> = ({
   onSelect,
   compact,
 }) => {
+  const [selectedFilters, setSelectedFilters] = useState<{ name: string, extensions: string[] }[]>([])
+
   return (
     <div className="flex flex-col">
       <SearchBar
@@ -43,7 +46,10 @@ export const Search: React.FC<SearchProps> = ({
           onSearch && onSearch(query || '')
         }}
       />
-      <div>
+
+      <FilterBar selectedFilters={selectedFilters} setSelectedFilters={setSelectedFilters} />
+
+      <div className='rounded-md border-gray-300 border-solid border-2 p-5 mt-3 mx-5'>
         {typeof results !== 'undefined' && (
           <SearchResult
             title={
@@ -69,6 +75,7 @@ export const Search: React.FC<SearchProps> = ({
             files={results}
             hideList={compact}
             compactOverview={compact}
+            filters={selectedFilters}
           />
         )}
       </div>

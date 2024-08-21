@@ -6,6 +6,7 @@ import {
   Chip,
 } from '@nextui-org/react'
 import React from 'react'
+import type {Selection} from "@nextui-org/react";
 
 export type FileCardProps = {
   name: string
@@ -15,6 +16,11 @@ export type FileCardProps = {
   tags?: string[]
 
   itemProps?: Partial<AccordionItemProps>
+
+  selectedKeys: Selection
+  setSelectedKeys(selectedKeys: Selection): void
+
+  children?: React.ReactNode
 } & Partial<AccordionProps>
 
 export const FileCard: React.FC<FileCardProps> = ({
@@ -24,6 +30,9 @@ export const FileCard: React.FC<FileCardProps> = ({
   tags,
   excerpt,
   itemProps = {},
+  selectedKeys,
+  setSelectedKeys,
+  children,
   ...props
 }) => {
   const displayName =
@@ -71,15 +80,16 @@ export const FileCard: React.FC<FileCardProps> = ({
   )
 
   return (
-    <Accordion selectedKeys={[]} isCompact {...props}>
+    <Accordion selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} isCompact {...props}>
       <AccordionItem
-        disableAnimation
-        hideIndicator
         title={title}
         subtitle={subtitle}
-        {...itemProps}
         startContent={startContent}
-      ></AccordionItem>
+        key={name + extension}
+        {...itemProps}
+      >
+        {children}
+      </AccordionItem>
     </Accordion>
   )
 }

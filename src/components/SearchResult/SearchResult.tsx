@@ -1,10 +1,12 @@
 import { FileData } from '@/types/data.types'
 import { Accordion, AccordionItem, Checkbox, Divider } from '@nextui-org/react'
 import clsx from 'clsx'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { ContextPanel } from '../ContextPanel/ContextPanel'
 import { FileCard } from '../FileCard'
 import { FolderCard } from '../FolderCard'
+import type {Selection} from "@nextui-org/react";
+import { unbody } from '@/services/api'
 import {
   AudioFileIcon,
   DraftIcon,
@@ -13,6 +15,7 @@ import {
   PdfFileIcon,
   VideoFileIcon,
 } from '../icons'
+import { FileInfo } from '../FileInfo'
 
 const iconMap = {
   folder: FolderIcon,
@@ -36,6 +39,8 @@ export type SearchResultProps = Omit<
 
   hideList?: boolean
   compactOverview?: boolean
+
+  filters: { name: string; extensions: string[] }[]
 }
 
 export const SearchResult: React.FC<SearchResultProps> = ({
@@ -47,19 +52,43 @@ export const SearchResult: React.FC<SearchResultProps> = ({
   className,
   hideList = false,
   compactOverview = false,
+  filters,
   ...props
 }) => {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
+
+  useEffect(() => {
+    const fetchData = async () => {
+      unbody.get.imageBlock.where({ id: "e39d9453-6dae-51e4-88f3-4d3efc2b6a2c" }).exec().then(res => {
+        console.log(res);
+      })
+    };
+  
+    fetchData();
+  }, [selected]);
+
+  const filteredFiles = useMemo(() => {
+    if (!filters.length) return files;
+    return files.filter(file => {
+      return filters.some(filter => {
+        if (file.type === 'folder' || !file.name.includes(".")) return false;
+        return filter.extensions.includes(file.name.split(".")[1].toLowerCase())
+      }
+      );
+    });
+  }, [files, filters]);
+
   const map: Record<string, FileData> = useMemo(
-    () => Object.fromEntries(files.map((file) => [file.id, file])),
-    [files, selected],
+    () => Object.fromEntries(filteredFiles.map((file) => [file.id, file])),
+    [filteredFiles, selected],
   )
 
   const [directoriesGroup, filesGroup] = useMemo(
     () => [
-      files.filter((f) => f.type === 'folder'),
-      files.filter((f) => f.type !== 'folder'),
+      filteredFiles.filter((f) => f.type === 'folder'),
+      filteredFiles.filter((f) => f.type !== 'folder'),
     ],
-    [files, map],
+    [filteredFiles, map],
   )
 
   const onSelectionChange = (newValue: string[]) => {
@@ -165,13 +194,16 @@ export const SearchResult: React.FC<SearchResultProps> = ({
 
                 return (
                   <div key={index}>
-                    <div className={clsx('flex flex-row items-center')}>
+                    <div className={clsx('flex flex-row items-center hover:bg-gray-100 rounded-md')}>
                       <FileCard
                         name={item.name}
                         tags={item.tags}
                         excerpt={item.excerpt}
                         itemProps={{
-                          onPress: () => onCheckboxChange(item.id),
+                          onPress: () => {
+                            selectedKeys !== "all" && selectedKeys.has(item.name + item.extension) ? setSelectedKeys(new Set([item.name + item.extension])) : setSelectedKeys(new Set([]))
+                            // onCheckboxChange(item.id)
+                          },
                           startContent: (
                             <>
                               <Checkbox
@@ -184,7 +216,11 @@ export const SearchResult: React.FC<SearchResultProps> = ({
                         }}
                         icon={<IconComponent />}
                         extension={item.extension || ''}
-                      />
+                        selectedKeys={selectedKeys}
+                        setSelectedKeys={setSelectedKeys}
+                      >
+                        <FileInfo item={item} />
+                      </FileCard>
                     </div>
                   </div>
                 )
