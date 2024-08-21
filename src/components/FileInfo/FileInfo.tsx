@@ -19,13 +19,11 @@ export const FileInfo = ({ item }: FileInfoProps) => {
             if (item.type === 'image') {
                 const { data: { payload: ImageBlock } } = await unbody.get.imageBlock.where({ id: item.id }).exec();
                 setFileUrl(ImageBlock ? ImageBlock[0].url as string : "");
-                console.log(ImageBlock)
             } else if (item.type === 'video') {
                 const { data: { payload: videoFiles  } } = await unbody.get.videoFile.where({ id: item.id }).exec();
                 setFileUrl(videoFiles ? videoFiles[0].playbackId as string : "");
             } else if (item.type === 'audio') {
                 const { data: { payload: audioFiles  } } = await unbody.get.audioFile.where({ id: item.id }).exec();
-                console.log(audioFiles);
                 setFileUrl(audioFiles ? audioFiles[0].playbackId as string : "");
             }
         })(); 

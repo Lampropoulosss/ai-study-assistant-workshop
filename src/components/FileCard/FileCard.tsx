@@ -19,6 +19,7 @@ export type FileCardProps = {
 
   selectedKeys: Selection
   setSelectedKeys(selectedKeys: Selection): void
+  fileIndex: number
 
   children?: React.ReactNode
 } & Partial<AccordionProps>
@@ -33,6 +34,7 @@ export const FileCard: React.FC<FileCardProps> = ({
   selectedKeys,
   setSelectedKeys,
   children,
+  fileIndex,
   ...props
 }) => {
   const displayName =
@@ -85,7 +87,7 @@ export const FileCard: React.FC<FileCardProps> = ({
         title={title}
         subtitle={subtitle}
         startContent={startContent}
-        key={name + extension}
+        key={`${fileIndex}`}
         {...itemProps}
       >
         {children}

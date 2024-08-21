@@ -1,12 +1,11 @@
 import { FileData } from '@/types/data.types'
 import { Accordion, AccordionItem, Checkbox, Divider } from '@nextui-org/react'
 import clsx from 'clsx'
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState } from 'react'
 import { ContextPanel } from '../ContextPanel/ContextPanel'
 import { FileCard } from '../FileCard'
 import { FolderCard } from '../FolderCard'
 import type {Selection} from "@nextui-org/react";
-import { unbody } from '@/services/api'
 import {
   AudioFileIcon,
   DraftIcon,
@@ -57,22 +56,12 @@ export const SearchResult: React.FC<SearchResultProps> = ({
 }) => {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      unbody.get.imageBlock.where({ id: "e39d9453-6dae-51e4-88f3-4d3efc2b6a2c" }).exec().then(res => {
-        console.log(res);
-      })
-    };
-  
-    fetchData();
-  }, [selected]);
-
   const filteredFiles = useMemo(() => {
     if (!filters.length) return files;
     return files.filter(file => {
       return filters.some(filter => {
         if (file.type === 'folder' || !file.name.includes(".")) return false;
-        return filter.extensions.includes(file.name.split(".")[1].toLowerCase())
+        return filter.extensions.includes(file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length).toLowerCase())
       }
       );
     });
@@ -201,7 +190,7 @@ export const SearchResult: React.FC<SearchResultProps> = ({
                         excerpt={item.excerpt}
                         itemProps={{
                           onPress: () => {
-                            selectedKeys !== "all" && selectedKeys.has(item.name + item.extension) ? setSelectedKeys(new Set([item.name + item.extension])) : setSelectedKeys(new Set([]))
+                            selectedKeys !== "all" && selectedKeys.has(`${index}`) ? setSelectedKeys(new Set([`${index}`])) : setSelectedKeys(new Set([]))
                             // onCheckboxChange(item.id)
                           },
                           startContent: (
@@ -218,6 +207,7 @@ export const SearchResult: React.FC<SearchResultProps> = ({
                         extension={item.extension || ''}
                         selectedKeys={selectedKeys}
                         setSelectedKeys={setSelectedKeys}
+                        fileIndex={index}
                       >
                         <FileInfo item={item} />
                       </FileCard>

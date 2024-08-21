@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import React, { useEffect, useRef } from 'react'
 import { ChatMessage, ChatMessageProps } from '../ChatMessage'
+import { ChatHistory } from '../ChatHistory'
 
 export type ChatMessagesProps = Omit<
   React.HTMLProps<HTMLDivElement>,
@@ -40,6 +41,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
         props.className,
       )}
     >
+      <ChatHistory />
       {data.map((message, index) => (
         <ChatMessage
           key={index}
