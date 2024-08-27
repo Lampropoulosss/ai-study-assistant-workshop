@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky install",
     "format": "pretty-quick",
     "format:staged": "pretty-quick --staged"
   },
@@ -28,7 +27,6 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "clsx": "^2.1.1",
-    "husky": "^8.0.0",
     "postcss": "^8",
     "prettier": "^3.3.0",
     "prettier-plugin-organize-imports": "^3.2.4",
