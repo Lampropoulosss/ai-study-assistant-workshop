@@ -16,6 +16,8 @@ export const HomePage: React.FC<HomePageProps> = ({ className, ...props }) => {
   const [messages, setMessages] = useState<ApiChatMessage[]>([])
   const [generating, setGenerating] = useState(false)
 
+  const [forceChatBar, setForceChatBar] = useState(false)
+
   const search = useSearch(
     { query },
     {
@@ -69,7 +71,7 @@ export const HomePage: React.FC<HomePageProps> = ({ className, ...props }) => {
     <ChatLayout
       messageBar={
         <MessageBar
-          hide={selectedFiles.length === 0}
+          show={selectedFiles.length > 0 || forceChatBar}
           prompt={prompt}
           onPromptChange={setPrompt}
           onSubmit={(prompt) => onPrompt(prompt)}
@@ -94,6 +96,8 @@ export const HomePage: React.FC<HomePageProps> = ({ className, ...props }) => {
           role: msg.role,
           message: msg.message,
         }))}
+        setMessages={setMessages}
+        setForceChatBar={setForceChatBar}
       />
     </ChatLayout>
   )

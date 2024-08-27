@@ -7,7 +7,7 @@ export type MessageBarProps = Omit<
   React.HTMLProps<HTMLDivElement>,
   'onSubmit'
 > & {
-  hide?: boolean
+  show?: boolean
   disabled?: boolean
   loading?: boolean
   prompt?: string
@@ -20,7 +20,7 @@ export type MessageBarProps = Omit<
 export const MessageBar: React.FC<MessageBarProps> = memo(
   ({
     prompt,
-    hide,
+    show,
     disabled = false,
     loading = false,
     onPromptChange,
@@ -44,7 +44,7 @@ export const MessageBar: React.FC<MessageBarProps> = memo(
           'transition',
           'translate-y-0',
           'opacity-100',
-          hide && ['opacity-0', 'invisible', 'translate-y-full'],
+          !show && ['opacity-0', 'invisible', 'translate-y-full'],
           props.className,
         )}
       >
